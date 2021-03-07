@@ -1,7 +1,5 @@
-package com.gg.model;
+package com.gg.chess.model;
 
-import com.gg.chess.model.KnightMovement;
-import com.gg.chess.model.Square;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

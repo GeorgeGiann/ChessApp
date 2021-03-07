@@ -1,4 +1,4 @@
-package com.gg;
+package com.gg.chess;
 
 import com.gg.chess.KnightPathAlgo;
 import com.gg.chess.model.Square;

@@ -1,7 +1,5 @@
-package com.gg.chessboard;
+package com.gg.chess.chessboard;
 
-import com.gg.chess.chessboard.InvalidPositionException;
-import com.gg.chess.chessboard.PositionValidator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
