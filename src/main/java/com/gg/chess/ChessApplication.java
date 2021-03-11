@@ -3,10 +3,14 @@ package com.gg.chess;
 import com.gg.chess.chessboard.InvalidPositionException;
 import com.gg.chess.model.Square;
 import com.gg.chess.chessboard.SquareUtil;
+import com.gg.chess.model.movement.KnightMovement;
+import com.gg.chess.model.movement.Movement;
 
 import java.util.Scanner;
 
 public class ChessApplication {
+
+    public final static int DISTANCE = 3;
 
     public static void main(String[] args) {
 
@@ -16,7 +20,8 @@ public class ChessApplication {
         System.out.println("Enter final chessboard:");
         Square finalSquare = readPosition();
 
-        KnightPathAlgo.findAndPrintThreeStepsPath(startingSquare, finalSquare);
+        Movement knightMovement = new KnightMovement();
+        KnightPathAlgo.executeAndPrint(startingSquare, finalSquare, knightMovement, DISTANCE);
     }
 
     private static Square readPosition() {

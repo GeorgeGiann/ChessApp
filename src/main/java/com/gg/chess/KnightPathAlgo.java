@@ -1,50 +1,52 @@
 package com.gg.chess;
 
 import com.gg.chess.chessboard.LetterCoordinate;
-import com.gg.chess.model.KnightMovement;
+import com.gg.chess.model.Path;
 import com.gg.chess.model.Square;
+import com.gg.chess.model.movement.Movement;
 
 import java.util.*;
 
 public class KnightPathAlgo {
 
-    private static final int THREE_STEPS = 3;
-
-    public static void findAndPrintThreeStepsPath(Square statingSquare, Square finalSquare) {
-        List<Square> path = findThreeStepsPaths(statingSquare, finalSquare);
+    public static void executeAndPrint(Square statingSquare, Square finalSquare, Movement movement, int distance) {
+        List<Path> path = execute(statingSquare, finalSquare, movement, distance);
         printResult(path);
     }
 
-    public static List<Square> findThreeStepsPaths(Square statingSquare, Square finalSquare) {
+    public static List<Path> execute(Square statingSquare, Square finalSquare, Movement movement, int distance) {
 
-        Queue<Square> toVisitQueue = new ArrayDeque<>();
-        toVisitQueue.add(statingSquare);
+        Queue<Path> toVisitQueue = new ArrayDeque<>();
+        Path startingPath = new Path(statingSquare);
+        toVisitQueue.add(startingPath);
 
-        List<Square> paths = new ArrayList<>();
+        List<Path> paths = new ArrayList<>();
         boolean threeStepPathsFound = false;
-        Square shortPath = null;
+        Path shortPath = null;
 
         while (!toVisitQueue.isEmpty()) {
-            Square square = toVisitQueue.poll();
+            Path path = toVisitQueue.poll();
 
-            if (square.equals(finalSquare)) {
-                if (square.getDistance() == THREE_STEPS) {
-                    paths.add(square);
+            Square checkingSquare = path.getLastSquare();
+            if (checkingSquare.getX()== finalSquare.getX() &&
+                    checkingSquare.getY() == finalSquare.getY()) {
+                if (path.getDistance() == distance) {
+                    paths.add(path);
                     threeStepPathsFound = true;
-                } else if (square.getDistance() > THREE_STEPS) {
-                    paths.add(square);
+                } else if (path.getDistance() > distance) {
+                    paths.add(path);
                     break;
                 } else {
-                    shortPath = square;
+                    shortPath = path;
                 }
             }
 
-            if (square.getDistance() < THREE_STEPS || (!threeStepPathsFound && shortPath == null)) {
+            if (path.getDistance() < distance || (!threeStepPathsFound && shortPath == null)) {
 
-                List<Square> nextSquares = KnightMovement.getNextSquares(square);
-                for (Square nextSquare : nextSquares) {
+                List<Path> nextPaths = movement.generatePaths(path);
+                for (Path nextPath : nextPaths) {
 
-                        toVisitQueue.add(nextSquare);
+                        toVisitQueue.add(nextPath);
                 }
             }
         }
@@ -56,43 +58,22 @@ public class KnightPathAlgo {
         return paths;
     }
 
-    private static void printResult(List<Square> paths) {
+    private static void printResult(List<Path> paths) {
         if (paths.size() == 1 && paths.get(0).getDistance() != 3) {
-            List<Square> path = getPathToSquare(paths.get(0));
-
             System.out.println("Solutions not found. Returning shortest path");
-            printPath(path);
+            printPath(paths.get(0));
         } else {
-            for (Square squarePath : paths) {
-                List<Square> path = getPathToSquare(squarePath);
-
+            for (Path path : paths) {
                 printPath(path);
             }
         }
     }
 
-    private static List<Square> getPathToSquare(Square square) {
-        List<Square> path = new ArrayList<>();
-
-        if (square.getPreviousSquare() == null) {
-            return null;
-        }
-
-        path.add(square);
-        while(square.getPreviousSquare() != null) {
-            path.add(square.getPreviousSquare());
-            square = square.getPreviousSquare();
-        }
-
-        Collections.reverse(path);
-
-        return path;
-    }
-
-    private static void printPath(List<Square> path) {
+    private static void printPath(Path path) {
         StringBuilder builder = new StringBuilder();
 
-        for (Square square : path) {
+        List<Square> squaresPath = path.getSquarePath();
+        for (Square square : squaresPath) {
             builder.append(LetterCoordinate.getLetter(square.getX()))
                     .append(square.getY())
                     .append(" -> ");

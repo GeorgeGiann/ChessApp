@@ -1,12 +1,15 @@
-package com.gg.chess.model;
+package com.gg.chess.model.movement;
 
+
+import com.gg.chess.model.Path;
+import com.gg.chess.model.Square;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class KnightMovement {
+public class KnightMovement implements Movement{
 
     private static List<Pair<Integer, Integer>> moves = Arrays.asList(
             new Pair<>(2, 1),
@@ -19,19 +22,23 @@ public class KnightMovement {
             new Pair<>(-1, -2)
     );
 
-    public static List<Square> getNextSquares(Square square) {
-        List<Square> nextSquares = new ArrayList<>();
+    public List<Path> generatePaths(Path path) {
+        List<Path> nextPaths = new ArrayList<>();
 
         for (Pair<Integer, Integer> move : moves) {
-            int nextX = square.getX() + move.getKey();
-            int nextY = square.getY() + move.getValue();
+            int nextX = path.getLastSquare().getX() + move.getKey();
+            int nextY = path.getLastSquare().getY() + move.getValue();
 
             if (isValidCoordinates(nextX, nextY)) {
-                nextSquares.add( new Square(nextX, nextY, square));
+                Square nextSquare = new Square(nextX, nextY);
+                Path newPath = new Path.PathBuilder(path)
+                        .addSquare(nextSquare)
+                        .build();
+                nextPaths.add( newPath);
             }
         }
 
-        return nextSquares;
+        return nextPaths;
     }
 
     private static boolean isValidCoordinates(int x, int y) {
